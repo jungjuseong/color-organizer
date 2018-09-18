@@ -1,3 +1,7 @@
+이 앱의 기본은 color-organizer입니다.
+이곳에 SVG 그패픽의 이동 삭제 복사 기능을 데이터 기반으로하는
+샘플 프로그램을 작성 중입니다.
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
