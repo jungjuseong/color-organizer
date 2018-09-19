@@ -8,8 +8,7 @@ const data = [
       id: '1',
       tagName: 'rect',
       value: 1,
-      x: 28, y: 50,
-      width: 200, height: 50,
+      x: 28, y: 50, width: 200, height: 50,
       fill: '#4422aa',
       strokeWidth: 1,
       stroke: 'rgb(0,0,0)',
@@ -43,7 +42,7 @@ const data = [
     {
       id: '5',
       tagName: 'circle',
-      value: 3,
+      value: 3, // fixed
       cx: 50, cy: 200, r: 50,
       fill: 'yellow',
       strokeWidth: 1,
@@ -62,31 +61,36 @@ const data = [
     {
         id: '7',
         tagName: 'image',
-        x: 0, y: 100,
-        height: 200, 
-        width: 200,
+        x: 0, y: 100, height: 200, width: 200,
         href:'https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png'
     }
 ];
 
-class SVGNameCardClass extends React.Component {    
+class SVGNameCardClass extends React.Component {
     state = { 
         items: data, 
         sum: 0, 
-        isMovable: false 
-    };
+        isMovable: false
+    }
 
-    onSelectChange = selected => {
+    onSelectChange = selected => {     
+        console.log('onSelectedChange - ')   
+        this.selectedItem = (selected && selected[0]) ? selected[0] : null;
         console.log(selected)
+
         const sum = selected
             .filter(t => t.value)
             .map(t => t.value)
             .reduce((acc, value) => acc + value, 0);
     
-        this.setState({ sum });
+        this.setState({ 
+            sum: sum
+        });
     };
 
-    onItemsChange = items => this.setState({ items })
+    onItemsChange = items => {
+        this.setState({ items })
+    }
 
     onCheck = e => { 
         this.setState({ 
@@ -95,15 +99,37 @@ class SVGNameCardClass extends React.Component {
     }
 
     onRemove = e => { 
-        this.setState({ 
-            isMovable: e.target.name === 'Move' 
-        });
+        if (this.selectedItem) {
+            console.log('onRemove');
+
+            let items = this.state.items.filter((item) => {
+                console.log(`${item.id} ${this.selectedItem.id}`)
+                return item.id !== this.selectedItem.id;
+            });
+            this.setState({
+                items
+            })
+        }
+    }
+
+    onCopy = e => { 
+        console.log('onCopy');
+        if (this.selectedItem) {
+            let item = this.selectedItem
+            item.x += 10;
+            item.y += 10;
+            item.id += 1000;
+            
+            this.setState(prevState => ({
+                items: [...prevState.items, item]
+            }))
+        }
     }
 
     render() {
         const { isMovable, items } = this.state;
 
-        const btn = <div>
+        const menuBtn = <div>
              <ButtonToolbar>
                 <ButtonGroup>
                     <Button name='Select' onClick = {this.onCheck}>Select</Button>
@@ -123,7 +149,7 @@ class SVGNameCardClass extends React.Component {
         return (
           <Col>          
             <Row>
-                { btn }
+                { menuBtn }
             </Row>
             <Row>
             <SVGContainer 

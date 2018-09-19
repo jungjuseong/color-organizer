@@ -32,49 +32,26 @@ class SVGContainer extends React.PureComponent {
   componentWillReceiveProps(nextProps) {
     if (!nextProps.isSelectable) {
       this.setState(INIT_STATE);
-            
     }
   }
 
   onMouseDown = e => {
     const { left, top } = this.svg.getBoundingClientRect();
     const { clientX, clientY } = e;
-    const x = clientX - left;
-    const y = clientY - top;
-    this.x = x;
-    this.y = y;
+
     this.setState({
-      x,
-      y,
-      width: 0,
-      height: 0,
-      left: x + left,
-      top: y + top,
+      x: clientX - left, 
+      y: clientY - top,
+      width: 0, height: 0,
+      left: clientX, 
+      top: clientY,
     });
+
     document.addEventListener('mousemove', this.onMouseMove);
     document.addEventListener('mouseup', this.onMouseUp);
   };
 
-  onMouseMove = e => {
-    const { left, top } = this.svg.getBoundingClientRect();
-    const { clientX, clientY } = e;
-    const x = clientX - left;
-    const y = clientY - top;
-    const nextX = Math.min(x, this.x);
-    const nexty = Math.min(y, this.y);
-    this.setState({
-      x: nextX,
-      y: nexty,
-      width: Math.abs(x - this.x),
-      height: Math.abs(y - this.y),
-      left: nextX + left,
-      top: nexty + top,
-    });
-  };
-
   onMouseUp = () => {
-    this.x = null;
-    this.y = null;
     document.removeEventListener('mousemove', this.onMouseMove);
     document.removeEventListener('mouseup', this.onMouseUp);
 
@@ -88,23 +65,14 @@ class SVGContainer extends React.PureComponent {
   };
 
   onPositionChange = ({ id, ...others }) => {
+    const { onItemsChange, items } = this.props;
     const updateXY = object => ({
       ...object,
       ...others,
     });
-    const index = R.findIndex(R.propEq('id', id))(this.props.items);
-    const items = R.adjust(updateXY, index)(this.props.items);
-    // for (let i = 0; i <= items.length; i ++) {
-    //   if (i === index) return;
-    //   if (items[i].tagName === 'text') return;
-    //   const intersections = intersect(
-    //     shape(items[index].tagName, items[index]),
-    //     shape(items[i].tagName, items[i]),
-    //   );
-    //   if (intersections.points.length > 0) return;
-    //
-    // }
-    this.props.onItemsChange(items);
+    const index = R.findIndex(R.propEq('id', id))(items);
+
+    onItemsChange(R.adjust(updateXY, index)(items));
   };
 
   onIntersectChange = ({ id, isIntersect }) => {
@@ -115,9 +83,11 @@ class SVGContainer extends React.PureComponent {
       },
     }));
   };
+
   onRef = ref => {
     this.svg = ref;
   };
+
   render() {
     const {
       onItemsChange,
@@ -128,7 +98,7 @@ class SVGContainer extends React.PureComponent {
       style,
       ...otherProps
     } = this.props;
-    const { left, top, x, y, width, height } = this.state;
+    const { left, top, width, height } = this.state;
     const { onMouseDown, onPositionChange, onIntersectChange, onRef } = this;
 
     return (

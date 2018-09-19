@@ -22,10 +22,10 @@ class ShapeItem extends React.PureComponent {
     isMovable: PropTypes.bool.isRequired,
     onPositionChange: PropTypes.func.isRequired,
     rect: PropTypes.shape({
-      width: PropTypes.number.isRequired,
-      left: PropTypes.number.isRequired,
-      height: PropTypes.number.isRequired,
-      top: PropTypes.number.isRequired,
+        width: PropTypes.number.isRequired,
+        left: PropTypes.number.isRequired,
+        height: PropTypes.number.isRequired,
+        top: PropTypes.number.isRequired,
     }).isRequired,
     onIntersectChange: PropTypes.func.isRequired,
     style: PropTypes.object,
@@ -43,7 +43,7 @@ class ShapeItem extends React.PureComponent {
     setTimeout(() => {
       this.updatePosition();
       this.checkIntersect(this.props);
-    }, 1000);
+    }, 200);
     document.addEventListener('scroll', this.updatePosition);
   };
 
@@ -94,16 +94,15 @@ class ShapeItem extends React.PureComponent {
 
   updatePosition = () => {
     this.clientRect =
-      this.component &&
-      this.component.getBoundingClientRect &&
-      this.component.getBoundingClientRect();
+        this.component && this.component.getBoundingClientRect &&
+        this.component.getBoundingClientRect();
   };
 
   checkIntersect = props => {
     const isIntersect = checkIntersect(
-      this.clientRect,
-      props.rect,
-      this.props.tagName,
+        this.clientRect,
+        props.rect,
+        this.props.tagName,
     );
     this.setState({ isIntersect });
     this.props.onIntersectChange({ id: props.id, isIntersect });
@@ -111,14 +110,13 @@ class ShapeItem extends React.PureComponent {
 
   render() {
     const {
-      // omit
-      rect,
-      onPositionChange,
-      onIntersectChange,
-      tagName: BaseComponent,
-      isMovable,
-      style,
-      ...otherProps
+        rect,
+        onPositionChange,
+        onIntersectChange,
+        tagName: BaseComponent,
+        isMovable,
+        style,
+        ...otherProps
     } = this.props;
 
     const { onMouseDown, onRef } = this;
@@ -128,9 +126,9 @@ class ShapeItem extends React.PureComponent {
       <BaseComponent
         ref={onRef}
         style={{
-          ...style,
-          cursor: isMovable ? 'move' : 'crosshair',
-          userSelect: 'none',
+            ...style,
+            cursor: isMovable ? 'move' : 'crosshair',
+            userSelect: 'none',
         }}
         fillOpacity={isIntersect ? 0.3 : 1}
         onMouseDown={isMovable ? onMouseDown : null}
